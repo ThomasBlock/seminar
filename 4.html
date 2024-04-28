@@ -13,13 +13,13 @@
     }
   });
 
-  async function switchChain(chainId, chainName, rpcUrl, explorer, currencySymbol) {
+  async function switchChain(chainId) {
     if (!window.ethereum) {
       alert("MetaMask is not available!");
       return;
     }
 
-    const hexChainId = '0x' + chainId.toString(16); // Convert decimal to hexadecimal for MetaMask compatibility
+    const hexChainId = '0x' + chainId.toString(16);
 
     try {
       await window.ethereum.request({
@@ -28,16 +28,12 @@
       });
     } catch (switchError) {
       console.error(switchError);
-      if (switchError.code === 4902) {
-        await addChain(chainId, chainName, rpcUrl, explorer, currencySymbol);
-      } else {
-        console.error("Unable to switch to the chain.");
-      }
+      alert("Error switching chain. Please add the chain first if it is not already added.");
     }
   }
 
   async function addChain(chainId, chainName, rpcUrl, explorer, currencySymbol) {
-    const hexChainId = '0x' + chainId.toString(16); // Ensure chain ID is in hexadecimal
+    const hexChainId = '0x' + chainId.toString(16);
 
     try {
       await window.ethereum.request({
@@ -46,9 +42,9 @@
           chainId: hexChainId,
           chainName: chainName,
           nativeCurrency: {
-            name: currencySymbol, // Use a more descriptive name for the currency if available
+            name: currencySymbol,
             symbol: currencySymbol,
-            decimals: 18 // This might vary between networks; adjust as necessary
+            decimals: 18
           },
           rpcUrls: [rpcUrl],
           blockExplorerUrls: [explorer]
@@ -56,14 +52,18 @@
       });
     } catch (addError) {
       console.error(addError);
+      alert("Error adding chain.");
     }
   }
 </script>
 </head>
 <body>
 <h1>MetaMask Chain Management</h1>
-<button onclick="switchChain(11155111, 'Sepolia', 'https://sepolia.infura.io/v3', 'https://sepolia.etherscan.io', 'ETH')">Holesky</button>
-<button onclick="switchChain(17000, 'Holesky', 'https://ethereum-holesky-rpc.publicnode.com', 'https://holesky.etherscan.io', 'ETH')">Holesky</button>
-<button onclick="switchChain(9659, 'Parallel Testnet', 'https://rpc-accused-coffee-koala-b9fn1dik76.t.conduit.xyz', 'https://explorerl2new-accused-coffee-koala-b9fn1dik76.t.conduit.xyz', 'ETH')">Switch to Parallel Testnet</button>
+<button onclick="switchChain(11155111)">Switch to Sepolia</button>
+<button onclick="addChain(11155111, 'Sepolia', 'https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID', 'https://sepolia.etherscan.io', 'ETH')">Add Sepolia</button>
+<button onclick="switchChain(17000)">Switch to Holesky</button>
+<button onclick="addChain(17000, 'Holesky', 'https://ethereum-holesky-rpc.publicnode.com', 'https://holesky.etherscan.io', 'ETH')">Add Holesky</button>
+<button onclick="switchChain(9659)">Switch to Parallel Testnet</button>
+<button onclick="addChain(9659, 'Parallel Testnet', 'https://rpc-accused-coffee-koala-b9fn1dik76.t.conduit.xyz', 'https://explorerl2new-accused-coffee-koala-b9fn1dik76.t.conduit.xyz', 'ETH')">Add Parallel Testnet</button>
 </body>
 </html>
