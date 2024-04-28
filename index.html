@@ -1,1 +1,91 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MetaMask Chain Switch</title>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof window.ethereum !== 'undefined') {
+      console.log('MetaMask is installed!');
+    } else {
+      alert("Please install MetaMask!");
+    }
+  });
+
+  async function switchChain(chainId) {
+    if (!window.ethereum) {
+      alert("MetaMask is not available!");
+      return;
+    }
+
+    const hexChainId = '0x' + chainId.toString(16);
+
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: hexChainId }]
+      });
+    } catch (switchError) {
+      console.error(switchError);
+      alert("Error switching chain. Please add the chain first if it is not already added.");
+    }
+  }
+
+  async function addChain(chainId, chainName, rpcUrl, explorer, currencySymbol) {
+    const hexChainId = '0x' + chainId.toString(16);
+
+    try {
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [{
+          chainId: hexChainId,
+          chainName: chainName,
+          nativeCurrency: {
+            name: currencySymbol,
+            symbol: currencySymbol,
+            decimals: 18
+          },
+          rpcUrls: [rpcUrl],
+          blockExplorerUrls: [explorer]
+        }]
+      });
+    } catch (addError) {
+      console.error(addError);
+      alert("Error adding chain.");
+    }
+  }
+</script>
+</head>
+<body>
+<h1>Blockchain Seminar</h1>
+
+<button onclick="addChain(11155111, 'Sepolia', 'https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID', 'https://sepolia.etherscan.io', 'ETH')">Add Sepolia</button>
+<button onclick="switchChain(11155111)">Switch to Sepolia</button><br>
+<a href="https://testnet.parallel.fi/bridge/">Parallel Bridge</a><br>
+<a href="https://bridge.swanchain.io/">Swan Bridge</a><br><br>
+
+<button onclick="addChain(17000, 'Holesky', 'https://ethereum-holesky-rpc.publicnode.com', 'https://holesky.etherscan.io', 'ETH')">Add Holesky</button>
+<button onclick="switchChain(17000)">Switch to Holesky</button><br><br>
+<a href="https://bridge.hekla.taiko.xyz/">Taiko Bridge</a><br><br>
+
+<button onclick="addChain(9659, 'Parallel Testnet', 'https://rpc-accused-coffee-koala-b9fn1dik76.t.conduit.xyz', 'https://explorerl2new-accused-coffee-koala-b9fn1dik76.t.conduit.xyz', 'ETH')">Add Parallel Testnet</button>
+<button onclick="switchChain(9659)">Switch to Parallel Testnet</button><br>
+<a href="https://testnet.parallel.fi/parallel_testnet/">Parallel</a><br><br>
+
+<button onclick="addChain(167009, 'Taiko Hekla', 'https://rpc.hekla.taiko.xyz', 'https://hekla.taikoscan.network', 'ETH')">Add Taiko Testnet</button>
+<button onclick="switchChain(167009)">Switch to Taiko Testnet</button><br>
+<a href="https://swap.hekla.taiko.xyz/#/swap">Taiko</a><br><br>
+
+<button onclick="addChain(80085, 'Bera Artio', 'https://artio.rpc.berachain.com', 'https://artio.beratrail.io', 'BERA')">Add Bera Testnet</button>
+<button onclick="switchChain(80085)">Switch to Bera Testnet</button><br>
+<a href="https://artio.bex.berachain.com/swap">Bera</a><br><br>
+
+<button onclick="addChain(20241133, 'Swan Proxima', 'https://rpc-proxima.swanchain.io', 'https://proxima-explorer.swanchain.io/', 'swETH')">Add Swan Testnet</button>
+<button onclick="switchChain(20241133)">Switch to Swan Testnet</button><br>
+<a href="https://lagrangedao.org/personal_center">Swan Lagrange</a><br><br>
+
+
+</body>
+</html>
