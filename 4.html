@@ -5,25 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MetaMask Chain Switch</title>
 <script>
-  const provider = window.ethereum;
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof window.ethereum !== 'undefined') {
+      console.log('MetaMask is installed!');
+    } else {
+      alert("Please install MetaMask!");
+    }
+  });
 
   async function switchChain(chainId, chainName, rpcUrl, explorer, currencySymbol) {
-    if (!provider) {
-      alert("MetaMask is not installed!");
+    if (!window.ethereum) {
+      alert("MetaMask is not available!");
       return;
     }
 
     const hexChainId = '0x' + chainId.toString(16); // Convert decimal to hexadecimal for MetaMask compatibility
 
     try {
-      await provider.request({
+      await window.ethereum.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: hexChainId }]
       });
     } catch (switchError) {
       console.error(switchError);
       if (switchError.code === 4902) {
-        addChain(chainId, chainName, rpcUrl, explorer, currencySymbol);
+        await addChain(chainId, chainName, rpcUrl, explorer, currencySymbol);
       } else {
         console.error("Unable to switch to the chain.");
       }
@@ -34,7 +40,7 @@
     const hexChainId = '0x' + chainId.toString(16); // Ensure chain ID is in hexadecimal
 
     try {
-      await provider.request({
+      await window.ethereum.request({
         method: "wallet_addEthereumChain",
         params: [{
           chainId: hexChainId,
