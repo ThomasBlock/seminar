@@ -7,39 +7,42 @@
 <script>
   const provider = window.ethereum;
 
-  async function switchChain(chainId, chainName, rpcUrl) {
+  async function switchChain(chainId, chainName, rpcUrl, explorer, currencySymbol) {
     if (!provider) {
       alert("MetaMask is not installed!");
       return;
     }
 
+    const hexChainId = '0x' + chainId.toString(16); // Convert decimal to hexadecimal for MetaMask compatibility
+
     try {
       await provider.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: chainId }]
+        params: [{ chainId: hexChainId }]
       });
     } catch (switchError) {
       console.error(switchError);
       if (switchError.code === 4902) {
-        addChain(chainId, chainName, rpcUrl);
+        addChain(chainId, chainName, rpcUrl, explorer, currencySymbol);
       } else {
         console.error("Unable to switch to the chain.");
       }
     }
   }
 
-  async function addChain(chainId, chainName, rpcUrl,explorer,currencySymbol) {
-	const hexChainId = '0x' + chainId.toString(16); // Convert decimal to hexadecimal
+  async function addChain(chainId, chainName, rpcUrl, explorer, currencySymbol) {
+    const hexChainId = '0x' + chainId.toString(16); // Ensure chain ID is in hexadecimal
+
     try {
       await provider.request({
         method: "wallet_addEthereumChain",
         params: [{
-          chainId: chainId,
+          chainId: hexChainId,
           chainName: chainName,
-			nativeCurrency: {
-            name: currencySymbol, // Assuming the symbol is also used as the name
-            symbol: currencySymbol, // Actual currency symbol
-            decimals: 18 // Standard decimal places for Ethereum-like networks
+          nativeCurrency: {
+            name: currencySymbol, // Use a more descriptive name for the currency if available
+            symbol: currencySymbol,
+            decimals: 18 // This might vary between networks; adjust as necessary
           },
           rpcUrls: [rpcUrl],
           blockExplorerUrls: [explorer]
@@ -53,7 +56,7 @@
 </head>
 <body>
 <h1>MetaMask Chain Management</h1>
-<button onclick="switchChain(17000, 'Holesky', 'https://ethereum-holesky-rpc.publicnode.com','https://holesky.etherscan.io','ETH')">Holesky</button>
-<button onclick="switchChain(9659, 'Parallel Testnet', 'https://rpc-accused-coffee-koala-b9fn1dik76.t.conduit.xyz','https://explorerl2new-accused-coffee-koala-b9fn1dik76.t.conduit.xyz','ETH')">Switch to Custom Network 2</button>
+<button onclick="switchChain(17000, 'Holesky', 'https://ethereum-holesky-rpc.publicnode.com', 'https://holesky.etherscan.io', 'ETH')">Holesky</button>
+<button onclick="switchChain(9659, 'Parallel Testnet', 'https://rpc-accused-coffee-koala-b9fn1dik76.t.conduit.xyz', 'https://explorerl2new-accused-coffee-koala-b9fn1dik76.t.conduit.xyz', 'ETH')">Switch to Parallel Testnet</button>
 </body>
 </html>
