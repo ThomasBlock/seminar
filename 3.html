@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MetaMask Chain Switch</title>
+<script>
+  async function switchChain() {
+    const provider = window.ethereum; // Using window.ethereum for compatibility
+    if (provider) {
+      try {
+        await provider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0xf00" }]
+        });
+      } catch (switchError) {
+        console.error(switchError);
+        if (switchError.code === 4902) {
+          try {
+            await provider.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: "0xf00",
+                  chainName: "Your Custom Network",
+                  rpcUrls: ["https://your.rpc.url"]
+                }
+              ]
+            });
+          } catch (addError) {
+            console.error(addError);
+          }
+        } else {
+          console.error("Unable to switch to the chain.");
+        }
+      }
+    } else {
+      alert("MetaMask is not installed!");
+    }
+  }
+</script>
+</head>
+<body>
+<h1>MetaMask Chain Management</h1>
+<button onclick="switchChain()">Switch Chain</button>
+</body>
+</html>

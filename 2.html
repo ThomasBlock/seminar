@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MetaMask Connection</title>
+</head>
+<body style=”display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f4;”>
+
+<button id=”connect-metamask” style=”background-color: #E8831D; color: #fff; font-weight: bold; font-size: 16px; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;”>
+Connect MetaMask
+</button>
+
+<script>
+document.addEventListener(‘DOMContentLoaded’, function() {
+const connectMetamaskButton = document.getElementById(‘connect-metamask’);
+
+if (typeof window.ethereum !== ‘undefined’) {
+connectMetamaskButton.addEventListener(‘click’, function() {
+window.ethereum
+.request({ method: ‘eth_requestAccounts’ })
+.then(function() {
+alert(‘MetaMask connected!’);
+})
+.catch(function(error) {
+alert(‘MetaMask connection error: ‘ + error.message);
+});
+});
+
+// Change button color on hover when MetaMask is available
+connectMetamaskButton.addEventListener(‘mouseover’, function() {
+connectMetamaskButton.style.backgroundColor = ‘#D5730D’;
+});
+connectMetamaskButton.addEventListener(‘mouseout’, function() {
+connectMetamaskButton.style.backgroundColor = ‘#E8831D’;
+});
+} else {
+connectMetamaskButton.addEventListener(‘click’, function() {
+alert(‘MetaMask not detected!’);
+});
+}
+});
+</script>
+</body>
+</html>
